@@ -1,7 +1,11 @@
 -- Structured Query Language
-SELECT studno,name -- Ä®·³ ¸í
-FROM student; -- student ¶ó°íÇÏ´Â Å×ÀÌºí
+SELECT studno,name -- ì¹¼ëŸ¼ ëª…
+FROM student; -- student ë¼ê³ í•˜ëŠ” í…Œì´ë¸”
 
 SELECT *
 FROM professor;
 
+SELECT studno,name, grade
+FROM student;
+
+-- ìˆ™ì œì™„ë£Œí•¨
