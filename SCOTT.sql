@@ -114,3 +114,9 @@ WHERE jumin like '__10%';
 
 SELECT ename || '''s sal is $' || sal as "Name And Sal"
 From emp;
+
+SELECT *
+FROM board;
+UPDATE board
+set writer = 'user02'
+WHERE board_no = 3;
