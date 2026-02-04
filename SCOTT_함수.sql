@@ -248,4 +248,157 @@ FROM student;
 SELECT *
 FROM student;
 
-집가고싶다
+--ANSI vs. ORACLE
+SELECT *
+FROM emp e
+JOIN dept d ON e.deptno = d.deptno
+WHERE job = 'SALESMAN';
+
+-- student(profno), professoe(profno)
+-- 학생번호, 이름, 담당교수번호, 이름
+SELECT studno
+    , s.name 
+    ,p.profno
+    , p.name
+FROM student s
+FULL outer JOIN professor p ON s.profno = p.profno;
+
+SELECT studno
+    , s.name 
+    --,decode(p.profno,NULL,'담당교수없음',p.profno)
+    ,nvl(p.name,'담당교수없음')
+FROM student s
+LEFT outer JOIN professor p ON s.profno = p.profno
+WHERE studno = 9715 OR studno = 9615;
+
+SELECT name
+    , case substr(tel, 1, instr(tel,')',1)-1) when '02' then '서울'
+                                              when '031' then '경기도'
+                                              when '051' then '부산'
+                                              else '기타'
+                                              END AS 거주지
+FROM student;
+
+SELECT name
+    , jumin
+    , CASE When substr(jumin,3,2) between '01' and '03' then '1/4분기'
+           When substr(jumin,3,2) between '04' and '06' then '2/4분기'
+           When substr(jumin,3,2) between '07' and '09' then '3/4분기'
+           When substr(jumin,3,2) between '10' and '12' then '4/4분기'
+      end "분기"
+FROM student;
+
+SELECT empno
+    , ename
+    , sal
+    , CASE WHEN sal between '1' and '1000' then 'LEVEL 1'
+           WHEN sal between '1001' and '2000' then 'LEVEL 2'
+           WHEN sal between '2001' and '3000' then 'LEVEL 3'
+           WHEN sal between '3001' and '4000' then 'LEVEL 4'
+                                               ELSE 'LEVEL 5'
+      END "LEVEL"
+FROM emp;
+
+SELECT job, count(*), sum(sal), round(avg(sal),1) avg
+    , min(hiredate)
+    , max(hiredate)
+FROM emp
+GROUP BY job;
+
+SELECT *
+FROM dept;
+
+SELECT job 부서명, count(*)인원, sum(sal)평균급여, round(avg(sal),1)평균급여
+FROM emp
+GROUP BY job;
+
+SELECT d.dname
+    , sum(e.sal)
+    , round(avg(e.sal + nvl(comm,01)),1)
+    , count(*)
+FROM emp e
+JOIN dept d ON e.deptno = d.deptno
+GROUP BY d.dname;
+
+SELECT deptno
+    ,job
+    ,avg(sal)
+    ,count(*)
+FROM emp
+GROUP BY job
+
+union
+
+SELECT deptno
+    ,''
+    ,round(avg(sal),1)
+    ,count(*)
+FROM emp
+GROUP BY deptno
+union
+
+SELECT 99
+    ,''
+    ,avg(sal)
+    ,count(*)
+FROM emp
+GROUP BY rollup(deptno,job)
+ORDER BY 1;
+
+
+SELECT dptno
+    , null job
+    , ROUND(AVG(sal),1)avg_sal
+    , COUNT(*)cnt_emp
+FROM emp
+GROUP BY deptno
+UNION ALL
+SELECT dptno
+    , null job
+    , ROUND(AVG(sal),1)avg_sal
+    , COUNT(*)cnt_emp
+FROM emp
+GROUP BY deptno
+UNION ALL
+SELECT dptno
+    , null job
+    , ROUND(AVG(sal),1)avg_sal
+    , COUNT(*)cnt_emp
+FROM emp
+GROUP BY deptno
+UNION ALL;
+
+-----------------------
+-- 게시판(BOARD)
+-- 글번호, 제목, 작성자, 글내용, 작성시간--, 조회수, 수정시간, 수정자 ...
+DROP TABLE board;
+CREATE TABLE board (
+-- 글번호, 제목, 작성자, 글내용
+    board_no number(10) PRIMARY KEY, --글번호
+    title varchar2(300) not null, -- 제목
+    writer varchar2(50) not null, -- 작성자
+    content varchar2(1000) not null, -- 글내용
+    created_at date default sysdate--작성시간
+);
+ALTER TABLE board add (click_cnt number);
+ALTER TABLE board modify content varchar2(1000);
+desc board;
+
+insert into board(board_no, title,writer,content)
+VALUES(1, 'test', 'user1', '연습글입니다');
+insert into board(board_no, title,writer,content)
+VALUES(2, 'test1', 'user2', '연습글입니다');
+insert into board(board_no, title,writer,content)
+VALUES(3, 'test1', 'user2', '연습글입니다');
+insert into board(board_no, title,writer,content)
+VALUES(4, 'test1', 'user2', '연습글입니다');
+SELECT *
+FROM board;
+commit;
+
+UPDATE board
+set writer = 'user03'
+WHERE board_no = 3;
+
+insert into board(board_no, title,writer,content)
+VALUES(5, 'test1', 'user2', '연습글입니다');
